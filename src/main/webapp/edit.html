@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Category</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Category Management System</h1>
+        <nav>
+            <a href="list.html">List Categories</a> |
+            <a href="create.html">Create Category</a> |
+            <a href="product-create.html">Create Product</a> |
+            <a href="product-list.html">List Product</a> |
+            <a href="product-edit.html">Edit Product</a> |
+            <a href="product-delete.html">Delete Product</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Edit Category</h2>
+        <form id="editCategoryForm">
+            <input type="hidden" id="categoryId">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea>
+            
+            <button type="submit">Update Category</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Category Management System</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const editCategoryForm = document.getElementById("editCategoryForm");
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get("id");
+
+            if (!id) {
+                alert("No category ID provided");
+                window.location.href = "list.html";
+                return;
+            }
+
+            function loadCategory() {
+                fetch(`/api/categories/${id}`)
+                    .then(response => response.json())
+                    .then(category => {
+                        document.getElementById("categoryId").value = category.id;
+                        document.getElementById("name").value = category.name;
+                        document.getElementById("description").value = category.description;
+                    });
+            }
+
+            editCategoryForm.addEventListener("submit", function(event) {
+                event.preventDefault();
+                const formData = new FormData(editCategoryForm);
+                const category = {
+                    name: formData.get("name"),
+                    description: formData.get("description")
+                };
+
+                fetch(`/api/categories/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(category)
+                })
+                .then(response => response.json())
+                .then(() => {
+                    window.location.href = "list.html";
+                });
+            });
+
+            loadCategory();
+        });
+    </script>
+</body>
+</html>

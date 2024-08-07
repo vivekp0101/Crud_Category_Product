@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Product</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Product Management System</h1>
+        <nav>
+            <a href="list.html">List Categories</a> |
+            <a href="create.html">Create Category</a> |
+            <a href="product-create.html">Create Product</a> |
+            <a href="product-list.html">List Product</a> |
+            <a href="product-edit.html">Edit Product</a> |
+            <a href="product-delete.html">Delete Product</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Delete Product</h2>
+        <form id="deleteProductForm">
+            <label for="id">Product ID:</label>
+            <input type="number" id="id" name="id" required>
+            <button type="submit">Delete Product</button>
+        </form>
+        <div id="message"></div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Product Management System</p>
+    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const deleteProductForm = document.getElementById("deleteProductForm");
+            const messageDiv = document.getElementById("message");
+            deleteProductForm.addEventListener("submit", function(event) {
+                event.preventDefault();
+                const formData = new FormData(deleteProductForm);
+                const id = formData.get("id");
+                fetch(`/api/products/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.status === 204) {
+                        messageDiv.innerHTML = "Product deleted successfully!";
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    messageDiv.innerHTML = "Error deleting product.";
+                });
+            });
+        });
+    </script>
+</body>
+</html>

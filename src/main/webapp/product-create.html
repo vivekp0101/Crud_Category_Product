@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Product</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Product Management System</h1>
+        <nav>
+            <a href="list.html">List Categories</a> |
+            <a href="create.html">Create Category</a> |
+            <a href="product-create.html">Create Product</a> |
+            <a href="product-list.html">List Product</a> |
+            <a href="product-edit.html">Edit Product</a> |
+            <a href="product-delete.html">Delete Product</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Create Product</h2>
+        <form id="createProductForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="description">Description:</label>
+            <input type="text" id="description" name="description" required>
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" required>
+            <label for="category">Category ID:</label>
+            <input type="number" id="category" name="category" required>
+            <button type="submit">Create Product</button>
+        </form>
+        <div id="message"></div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Product Management System</p>
+    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const createProductForm = document.getElementById("createProductForm");
+            const messageDiv = document.getElementById("message");
+            createProductForm.addEventListener("submit", function(event) {
+                event.preventDefault();
+                const formData = new FormData(createProductForm);
+                const data = {
+                    name: formData.get("name"),
+                    description: formData.get("description"),
+                    price: parseFloat(formData.get("price")),
+                    category: { id: parseInt(formData.get("category")) }
+                };
+                fetch('/api/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    messageDiv.innerHTML = "Product created successfully!";
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    messageDiv.innerHTML = "Error creating product.";
+                });
+            });
+        });
+    </script>
+</body>
+</html>
